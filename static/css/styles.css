@@ -70,6 +70,10 @@
   box-sizing: border-box;
 }
 
+.message-sent {
+    text-align: center;
+    }
+
 @media (prefers-reduced-motion: no-preference) {
   :root {
     scroll-behavior: smooth;
