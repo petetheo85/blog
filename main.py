@@ -6,16 +6,21 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from flask_gravatar import Gravatar
 from functools import wraps
-from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
+from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm, ContactForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date
 import smtplib
+import os
 
-MY_EMAIL = "petetheo.python@gmail.com"
-MY_PASSWORD = "oymkotjryfzlvmak"
+MY_EMAIL = os.environ.get("SMTP_FROM_EMAIL")
+MY_PASSWORD = os.environ.get("EMAIL_PASSWORD")
+
+print(MY_EMAIL)
+print(MY_PASSWORD)
+print(os.environ)
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
+app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY')
 ckeditor = CKEditor(app)
 bootstrap = Bootstrap(app)
 gravatar = Gravatar(app, size=100, rating='g', default='retro', force_default=False,
@@ -226,26 +231,29 @@ def about():
 
 @app.route("/contact.html", methods=["POST", "GET"])
 def contact():
-    if request.method == "POST":
-        data = request.form
-        send_email(data['name'], data['email'], data['phone'], data['message'])
-        return render_template("contact.html", msg_sent=True, current_user=current_user)
+    form = ContactForm()
+
+    if form.validate_on_submit():
+        name = request.form.get('name')
+        email = request.form.get('email')
+        message = request.form.get('message_text')
+        send_email(name, email, message)
+        return render_template("contact.html", form=form, msg_sent=True, current_user=current_user)
     else:
-        return render_template("contact.html", msg_sent=False, current_user=current_user)
+        return render_template("contact.html", form=form, msg_sent=False, current_user=current_user)
 
 
-def send_email(name, email, phone, message):
+def send_email(name, email, message):
     email_message = f"Subject:New Contact Form Submitted!\n\n" \
                     f"Name: {name}\n" \
                     f"Email: {email}\n" \
-                    f"Phone: {phone}\n" \
                     f"Message:{message}"
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as connection:
         connection.ehlo()
         connection.login(user=MY_EMAIL, password=MY_PASSWORD)
         connection.sendmail(
             from_addr=MY_EMAIL,
-            to_addrs="petetheo@gmail.com",
+            to_addrs=os.environ.get('SMTP_TO_EMAIL'),
             msg=email_message
         )
 
