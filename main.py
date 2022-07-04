@@ -249,7 +249,7 @@ def send_email(name, email, message):
     email_message = f"Subject:New Contact Form Submitted!\n\n" \
                     f"Name: {name}\n" \
                     f"Email: {email}\n" \
-                    f"Message:{message}"
+                    f"Message: {message}"
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as connection:
         connection.ehlo()
         connection.login(user=MY_EMAIL, password=MY_PASSWORD)
