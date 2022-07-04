@@ -28,7 +28,7 @@ gravatar = Gravatar(app, size=100, rating='g', default='retro', force_default=Fa
 # if uri.startswith("postgres://"):
 #     uri = uri.replace("postgres://", "postgresql://", 1)
 
-# CONNECT TO DB
+# CONNECT TO DB - replace "postgres" with "postgresql"
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL').replace("://", "ql://", 1)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
