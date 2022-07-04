@@ -13,14 +13,8 @@ import smtplib
 import os
 import re
 
-
-
 MY_EMAIL = os.environ.get("SMTP_FROM_EMAIL")
 MY_PASSWORD = os.environ.get("EMAIL_PASSWORD")
-
-print(MY_EMAIL)
-print(MY_PASSWORD)
-print(os.environ)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY')
